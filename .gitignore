@@ -1,3 +1,6 @@
 *.o
 framebuffer.tga
 main
+
+/.vs/
+/.vscode/
