@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 {
         (void) argc;
         (void) argv;
-        
+
         TGAImage image(100, 100, TGAImage::RGB);
 
         Line(image, 20, 20, 70, 60);
@@ -33,10 +33,16 @@ void Line(TGAImage &image, int x1, int y1, int x2, int y2)
         {
                 int dx = x1 < x2 ? 1 : -1;
                 float dy = (float)(y2 - y1) / (x2 - x1);
+                float errorY = 0;
 
                 float y = y1;
-                for (int x = x1; x <= x2; x += dx, y += dy)
+                for (int x = x1; x <= x2; x += dx, errorY += dy)
                 {
+                        if (0.5 < errorY)
+                        {
+                                y += 1;
+                                errorY -= 1;
+                        }
                         image.set(x, y, red);
                 }
         }
@@ -44,10 +50,16 @@ void Line(TGAImage &image, int x1, int y1, int x2, int y2)
         {
                 int dy = y1 < y2 ? 1 : -1;
                 float dx = (float)(x2 - x1) / (y2 - y1);
+                float errorX = 0;
 
                 float x = x1;
-                for(int y = y1; y <= y2; y += dy, x += dx)
+                for(int y = y1; y <= y2; y += dy, errorX += dx)
                 {
+                        if(0.5 < errorX)
+                        {
+                                x += 1;
+                                errorX -= 1;
+                        }
                         image.set(x, y, red);
                 }
         }
