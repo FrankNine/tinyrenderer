@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "tgaimage.h"
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
@@ -18,12 +20,29 @@ int main(int argc, char **argv)
 
 void Line(TGAImage &image, int x1, int y1, int x2, int y2)
 {
-        int dx = x1 < x2 ? 1 : -1;
-        float dy = (float)(y2 - y1) / (x2 - x1);
+        int xRange = abs(x2 - x1);
+        int yRange = abs(y2 - y1);
 
-        float y = y1;
-        for (int x = x1; x <= x2; x += dx, y += dy)
+        if (yRange < xRange)
         {
-                image.set(x, y, red);
+                int dx = x1 < x2 ? 1 : -1;
+                float dy = (float)(y2 - y1) / (x2 - x1);
+
+                float y = y1;
+                for (int x = x1; x <= x2; x += dx, y += dy)
+                {
+                        image.set(x, y, red);
+                }
+        }
+        else
+        {
+                int dy = y1 < y2 ? 1 : -1;
+                float dx = (float)(x2 - x1) / (y2 - y1);
+
+                float x = x1;
+                for(int y = y1; y <= y2; y += dy, x += dx)
+                {
+                        image.set(x, y, red);
+                }
         }
 }
