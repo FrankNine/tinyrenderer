@@ -9,6 +9,9 @@ void Line(TGAImage &, int, int, int, int);
 
 int main(int argc, char **argv)
 {
+        (void) argc;
+        (void) argv;
+        
         TGAImage image(100, 100, TGAImage::RGB);
 
         Line(image, 20, 20, 30, 60);
