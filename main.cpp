@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 #include "tgaimage.h"
 #include "model.h"
@@ -29,6 +30,7 @@ int main(int argc, char **argv)
                 {
                         Vec3f v0 = model->vert(face[j]);
                         Vec3f v1 = model->vert(face[(j + 1) % 3]);
+
                         int x0 = (v0.x + 1.) * width / 2.;
                         int y0 = (v0.y + 1.) * height / 2.;
                         int x1 = (v1.x + 1.) * width / 2.;
@@ -44,8 +46,6 @@ int main(int argc, char **argv)
 
 void Line(TGAImage &image, int x1, int y1, int x2, int y2)
 {
-        std::cout << x1 << "," << y1 << " to " << x2 << "," << y2 << std::endl;
-
         int xRange = abs(x2 - x1);
         int yRange = abs(y2 - y1);
 
@@ -57,34 +57,54 @@ void Line(TGAImage &image, int x1, int y1, int x2, int y2)
 
         if (yRange < xRange)
         {
-                int dx = x1 < x2 ? 1 : -1;
+                if(x2 < x1)
+                {
+                        std::swap(x1, x2);
+                        std::swap(y1, y2);
+                }
+
                 float dy = (float)(y2 - y1) / (x2 - x1);
                 float errorY = 0;
 
                 float y = y1;
-                for (int x = x1; x <= x2; x += dx, errorY += dy)
+                for (int x = x1; x <= x2; x += 1, errorY += dy)
                 {
                         if (0.5 < errorY)
                         {
                                 y += 1;
                                 errorY -= 1;
                         }
+                        else if(errorY < -0.5)
+                        {
+                                y -= 1;
+                                errorY += 1;
+                        }
                         image.set(x, y, red);
                 }
         }
         else
         {
-                int dy = y1 < y2 ? 1 : -1;
+                if(y2 < y1)
+                {
+                        std::swap(x1, x2);
+                        std::swap(y1, y2);
+                }
+
                 float dx = (float)(x2 - x1) / (y2 - y1);
                 float errorX = 0;
 
                 float x = x1;
-                for(int y = y1; y <= y2; y += dy, errorX += dx)
+                for(int y = y1; y <= y2; y += 1, errorX += dx)
                 {
                         if(0.5 < errorX)
                         {
                                 x += 1;
                                 errorX -= 1;
+                        }
+                        else if(errorX < -0.5)
+                        {
+                                x -= 1;
+                                errorX += 1;
                         }
                         image.set(x, y, red);
                 }
