@@ -1,6 +1,8 @@
 #include <cmath>
+#include <iostream>
 
 #include "tgaimage.h"
+#include "model.h"
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
@@ -12,12 +14,28 @@ int main(int argc, char **argv)
         (void) argc;
         (void) argv;
 
-        TGAImage image(100, 100, TGAImage::RGB);
+        int width = 400;
+        int height = 400;
 
-        Line(image, 20, 20, 70, 60);
-        Line(image, 20, 20, 70, 50);
-        Line(image, 20, 20, 70, 40);
-        Line(image, 20, 20, 70, 30);
+        Model* model = new Model("obj/african_head/african_head.obj");
+
+        TGAImage image(width, height, TGAImage::RGB);
+
+        for (int i = 0; i < model->nfaces(); i++)
+        {
+                std::cout << i << "/" << model->nfaces() << std::endl;
+                std::vector<int> face = model->face(i);
+                for (int j = 0; j < 3; j++)
+                {
+                        Vec3f v0 = model->vert(face[j]);
+                        Vec3f v1 = model->vert(face[(j + 1) % 3]);
+                        int x0 = (v0.x + 1.) * width / 2.;
+                        int y0 = (v0.y + 1.) * height / 2.;
+                        int x1 = (v1.x + 1.) * width / 2.;
+                        int y1 = (v1.y + 1.) * height / 2.;
+                        Line(image, x0, y0, x1, y1);
+                }
+        }
 
         image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
         image.write_tga_file("output.tga");
@@ -26,8 +44,16 @@ int main(int argc, char **argv)
 
 void Line(TGAImage &image, int x1, int y1, int x2, int y2)
 {
+        std::cout << x1 << "," << y1 << " to " << x2 << "," << y2 << std::endl;
+
         int xRange = abs(x2 - x1);
         int yRange = abs(y2 - y1);
+
+        if(xRange == 0 && yRange == 0)
+        {
+                image.set(x1, y1, red);
+                return;
+        }
 
         if (yRange < xRange)
         {
