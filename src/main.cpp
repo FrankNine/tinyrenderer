@@ -8,7 +8,7 @@
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
 
-void Line(TGAImage &, int, int, int, int);
+void Line(TGAImage &, Vec2i, Vec2i);
 
 int main(int argc, char **argv)
 {
@@ -24,7 +24,6 @@ int main(int argc, char **argv)
 
         for (int i = 0; i < model->nfaces(); i++)
         {
-                std::cout << i << "/" << model->nfaces() << std::endl;
                 std::vector<int> face = model->face(i);
                 for (int j = 0; j < 3; j++)
                 {
@@ -35,7 +34,7 @@ int main(int argc, char **argv)
                         int y0 = (v0.y + 1.) * height / 2.;
                         int x1 = (v1.x + 1.) * width / 2.;
                         int y1 = (v1.y + 1.) * height / 2.;
-                        Line(image, x0, y0, x1, y1);
+                        Line(image, Vec2i(x0,y0), Vec2i(x1, y1));
                 }
         }
 
@@ -44,30 +43,29 @@ int main(int argc, char **argv)
         return 0;
 }
 
-void Line(TGAImage &image, int x1, int y1, int x2, int y2)
-{
-        int xRange = abs(x2 - x1);
-        int yRange = abs(y2 - y1);
 
-        if(xRange == 0 && yRange == 0)
+void Line(TGAImage &image, Vec2i v1, Vec2i v2)
+{
+        Vec2i delta = v2 - v1;
+
+        if(delta.x == 0 && delta.y == 0)
         {
-                image.set(x1, y1, red);
+                image.set(v1.x, v1.y, red);
                 return;
         }
 
-        if (yRange < xRange)
+        if (delta.y < delta.x)
         {
-                if(x2 < x1)
+                if(v2.x < v1.x)
                 {
-                        std::swap(x1, x2);
-                        std::swap(y1, y2);
+                        std::swap(v1, v2);
                 }
 
-                float dy = (float)(y2 - y1) / (x2 - x1);
+                float dy = (float)(v2.y - v1.y) / (v2.x - v1.x);
                 float errorY = 0;
 
-                float y = y1;
-                for (int x = x1; x <= x2; x += 1, errorY += dy)
+                float y = v1.y;
+                for (int x = v1.x; x <= v2.x; x += 1, errorY += dy)
                 {
                         if (0.5 < errorY)
                         {
@@ -84,17 +82,16 @@ void Line(TGAImage &image, int x1, int y1, int x2, int y2)
         }
         else
         {
-                if(y2 < y1)
+                if(v2.y < v1.y)
                 {
-                        std::swap(x1, x2);
-                        std::swap(y1, y2);
+                        std::swap(v1, v2);
                 }
 
-                float dx = (float)(x2 - x1) / (y2 - y1);
+                float dx = (float)(v2.x - v1.x) / (v2.y - v1.y);
                 float errorX = 0;
 
-                float x = x1;
-                for(int y = y1; y <= y2; y += 1, errorX += dx)
+                float x = v1.x;
+                for(int y = v1.y; y <= v2.y; y += 1, errorX += dx)
                 {
                         if(0.5 < errorX)
                         {

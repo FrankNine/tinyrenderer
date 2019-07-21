@@ -1,0 +1,19 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "make",
+            "command": "make",
+            "args": [
+                "main"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "presentation": {
+				"panel": "new"
+			},
+        }
+    ],
+    "version": "2.0.0"
+}

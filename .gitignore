@@ -1,6 +1,13 @@
-*.o
-framebuffer.tga
-main
-
+# Visual Studio
 /.vs/
-/.vscode/
+
+# Visual Studio Code, keeps launching config and C++ settings
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/extensions.json
+
+# Exclude CMake build and target binary folder
+build
+bin
